@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Yourself Good - Result</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Page Links -->
+    <nav class="page-nav">
+        <a href="page.html">📝 TASKS</a>
+        <a href="result.html" class="active">📊 RESULT</a>
+    </nav>
+    <!-- Date and Time -->
+    <div class="datetime">
+        <div id="date"></div>
+        <div id="time"></div>
+    </div>
+    <div class="result-page">
+        <h1 class="website-title">
+            MAKE YOURSELF GOOD
+        </h1>
+        <div class="result-box">
+            <div class="result-header">
+                <span>TASK NO</span>
+                <span>TIME</span>
+                <span>TASK NAME</span>
+                <span>POINTS</span>
+                <span>FINAL</span>
+            </div>
+            <div id="resultList"></div>
+            <div class="total-points">
+                Today Tasks Points -
+                <strong>
+                    <span id="totalPoints">0</span>/<span id="maxPoints">0</span>
+                </strong>
+            </div>
+            <!-- Overall Day Performance Graph -->
+            <div class="graph-section">
+                <h3>OVERALL DAY PERFORMANCE GRAPH</h3>
+                <div id="performanceGraph"></div>
+            </div>
+        </div>
+        <div class="overall">
+            <p>Today Overall Tasks Performance</p>
+            <h2 id="overallResult">
+                Excellent
+            </h2>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><strong id="statDone">0</strong><span>Tasks Done ✓</span></div>
+            <div class="stat-card"><strong id="statHalf">0</strong><span>Half Done −</span></div>
+            <div class="stat-card"><strong id="statMissed">0</strong><span>Not Done ×</span></div>
+            <div class="stat-card"><strong id="statPercent">0%</strong><span>Completion Score</span></div>
+        </div>
+        <div class="quote-card" id="resultQuote"></div>
+        <div class="extra-panel">
+            <h3>LAST 7 DAYS</h3>
+            <div class="history-bars" id="historyBars"></div>
+            <div class="history-meta">
+                <span id="historyStreak"></span>
+                <span id="historyBest"></span>
+            </div>
+        </div>
+        <div class="result-actions">
+            <button class="refresh-button result-refresh" onclick="refreshDay()">
+                REFRESH
+            </button>
+            <a href="page.html" class="refresh-button result-refresh back-link">
+                BACK TO TASKS
+            </a>
+            <button class="submit-button result-refresh" onclick="printReport()">
+                PRINT REPORT
+            </button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+<style>
+    * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(124,58,237,0.65), transparent 38%),
+        radial-gradient(circle at 80% 30%, rgba(184,129,43,0.45), transparent 35%),
+        radial-gradient(circle at 50% 95%, rgba(124,58,237,0.45), transparent 40%),
+        linear-gradient(135deg, #050008, #2a0a4d, #0a0010 60%, #3a2508);
+    background-attachment: fixed;
+    color: #fff4dc;
+}
+/* DATE + TIME */
+.datetime {
+    position: fixed;
+    top: 20px;
+    right: 25px;
+    text-align: right;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.6;
+    z-index: 100;
+}
+/* LOGIN PAGE */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 50px;
+}
+.welcome-box {
+    width: 650px;
+    max-width: 90%;
+    padding: 25px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #1a0a2e;
+    background: rgba(212,160,60,0.9);
+    border-radius: 5px;
+    transform: skew(-8deg);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.3);
+}
+.login-title {
+    margin-top: 45px;
+    font-size: 70px;
+    font-weight: bold;
+    text-shadow:
+        0 5px 15px rgba(0,0,0,0.4);
+}
+.login-box {
+    width: 610px;
+    max-width: 90%;
+    margin-top: 35px;
+}
+.login-box label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 18px;
+}
+.login-box input {
+    width: 100%;
+    padding: 20px;
+    border: 2px solid rgba(212,160,60,0.6);
+    border-radius: 40px;
+    outline: none;
+    font-size: 17px;
+    background: rgba(255,244,220,0.9);
+    color: #222;
+box-shadow:
+        0 8px 20px rgba(0,0,0,0.2);
+}
+.login-box input:focus {
+    border-color: #d4a03c;
+}
+/* MAIN BUTTON */
+.main-button {
+    display: block;
+    margin: 65px auto 0;
+    width: 320px;
+    padding: 18px;
+    border: none;
+    border-radius: 40px;
+    background: linear-gradient(
+        90deg,
+        #7c3aed,
+        #b8812b
+    );
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.35);
+    transition: 0.3s;
+}
+.main-button:hover,
+.add-button:hover,
+.submit-button:hover,
+.refresh-button:hover,
+.save-button:hover {
+    transform: scale(1.05);
+}
+.error {
+    text-align: center;
+    margin-top: 15px;
+    color: #ffd27a;
+    font-weight: bold;
+}
+/* TASK PAGE */
+.tasks-page {
+    min-height: 100vh;
+    padding: 55px 5% 40px;
+    text-align: center;
+}
+.website-title {
+    display: inline-block;
+    padding: 25px 70px;
+    border-radius: 35px;
+    background: rgba(10,0,20,0.65);
+    border: 1px solid rgba(212,160,60,0.55);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.25);
+    font-size: 45px;
+    text-shadow:
+        0 3px 10px rgba(0,0,0,0.4);
+}
+.welcome-text {
+    text-align: left;
+    margin-top: 25px;
+    font-size: 18px;
+}
+.tasks-page h2 {
+    color: #e8b95a;
+    font-size: 45px;
+    margin: 20px 0;
+}
+/* ADD TASK BUTTON */
+.add-button {
+    border: none;
+    padding: 15px 40px;
+    border-radius: 35px;
+    background: linear-gradient(
+        90deg,
+        #7c3aed,
+        #b8812b
+    );
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.3);
+    transition: 0.3s;
+}
+/* TASK FORM */
+.task-form {
+    display: none;
+    width: 700px;
+    max-width: 95%;
+    margin: 25px auto;
+    padding: 25px;
+    border-radius: 25px;
+    background: rgba(8,0,16,0.65);
+    border: 1px solid rgba(212,160,60,0.4);
+    backdrop-filter: blur(15px);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.25);
+}
+.task-form input {
+    width: 45%;
+    padding: 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 30px;
+    outline: none;
+    font-size: 16px;
+}
+.save-button,
+.cancel-button {
+    padding: 12px 25px;
+    margin: 10px 5px;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-weight: bold;
+  cursor: pointer;
+}
+.save-button {
+    background: linear-gradient(90deg, #7c3aed, #b8812b);
+}
+.cancel-button {
+    background: #1c0a33;
+    border: 1px solid #b8812b;
+}
+/* TASK TABLE */
+.task-container {
+    display: none;
+    margin-top: 35px;
+    overflow-x: auto;
+    border-radius: 25px;
+    background: rgba(8,0,16,0.65);
+    border: 1px solid rgba(212,160,60,0.4);
+    backdrop-filter: blur(15px);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.25);
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+th {
+    padding: 20px 10px;
+    font-size: 17px;
+    border-bottom: 1px solid rgba(212,160,60,0.45);
+    color: #e8b95a;
+}
+td {
+    padding: 14px 8px;
+    border-bottom: 1px solid rgba(212,160,60,0.2);
+    font-size: 16px;
+}
+/* STATUS BUTTONS */
+.status-button {
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.done {
+    background: #20c46b;
+}
+.half {
+    background: #f5c400;
+}
+.notdone {
+    background: #e7353f;
+}
+.status-button.selected {
+    transform: scale(1.2);
+    box-shadow:
+        0 0 20px rgba(255,255,255,0.8);
+}
+/* BOTTOM BUTTONS */
+.bottom-buttons {
+    margin-top: 30px;
+}
+.refresh-button,
+.submit-button {
+    padding: 14px 35px;
+    margin: 5px;
+    border: none;
+    border-radius: 30px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.refresh-button {
+    background: linear-gradient(
+        90deg,
+        #b8812b,
+        #7c3aed
+    );
+}
+.submit-button {
+    background: linear-gradient(
+        90deg,
+        #5b21b6,
+        #9c6a1e
+    );
+}
+/* RESULT PAGE */
+.result-page {
+    min-height: 100vh;
+    padding: 55px 5%;
+    text-align: center;
+}
+.result-box {
+    width: 900px;
+    max-width: 95%;
+    margin: 50px auto 0;
+    padding: 25px;
+    border-radius: 30px;
+    background: rgba(8,0,16,0.65);
+    border: 1px solid rgba(212,160,60,0.45);
+    backdrop-filter: blur(15px);
+    box-shadow:
+        0 10px 40px rgba(0,0,0,0.3);
+}
+.result-header,
+.result-row {
+    display: grid;
+    grid-template-columns:
+        0.7fr
+        1.3fr
+        2fr
+        1fr
+        1.3fr;
+    align-items: center;
+    gap: 10px;
+}
+  .result-header {
+    font-weight: bold;
+    padding: 15px;
+    border-bottom: 1px solid rgba(212,160,60,0.55);
+    color: #e8b95a;
+}
+.result-row {
+    padding: 18px 10px;
+    border-bottom: 1px solid rgba(212,160,60,0.2);
+}
+.points {
+    font-size: 25px;
+    font-weight: bold;
+}
+.excellent {
+    color: #6dff45;
+    font-weight: bold;
+    font-size: 20px;
+}
+.good {
+    color: #ffe600;
+    font-weight: bold;
+    font-size: 20px;
+}
+.poor {
+    color: #ff5252;
+    font-weight: bold;
+    font-size: 20px;
+}
+.total-points {
+    margin-top: 30px;
+    font-size: 25px;
+}
+.total-points strong {
+    font-size: 35px;
+}
+.overall {
+    margin-top: 50px;
+}
+.overall p {
+    font-size: 25px;
+}
+.overall h2 {
+    margin-top: 15px;
+    text-shadow: 0 0 18px rgba(124,58,237,0.7);
+    font-size: 55px;
+}
+.result-refresh {
+    margin-top: 30px;
+}
+/* MOBILE */
+@media (max-width: 700px) {
+    .datetime {
+        font-size: 11px;
+        top: 10px;
+        right: 10px;
+    }
+    .welcome-box {
+        font-size: 20px;
+    }
+    .login-title {
+        font-size: 50px;
+    }
+    .website-title {
+        font-size: 25px;
+        padding: 20px 25px;
+    }
+    .tasks-page h2 {
+        font-size: 32px;
+    }
+    .welcome-text {
+        font-size: 14px;
+    }
+    .task-form input {
+        width: 90%;
+    }
+    .result-header,
+    .result-row {
+        grid-template-columns:
+            0.5fr
+            1fr
+            1.5fr
+            0.7fr
+            1fr;
+        font-size: 12px;
+    }
+    .overall h2 {
+        font-size: 40px;
+    }
+}
+/* =====================================
+   NEW FEATURES (purple / black / golden brown)
+===================================== */
+:root {
+    --purple: #7c3aed;
+    --purple-dark: #2a0a4d;
+    --black: #0a0010;
+    --gold: #e8b95a;
+    --gold-brown: #b8812b;
+}
+.quote-card {
+    width: 800px;
+    max-width: 100%;
+    margin: 22px auto 0;
+    padding: 16px 22px;
+    border-radius: 20px;
+    background: linear-gradient(90deg, rgba(124,58,237,0.35), rgba(184,129,43,0.35));
+    border: 1px solid rgba(212,160,60,0.5);
+    font-style: italic;
+    font-size: 17px;
+    color: #ffe9b8;
+}
+.progress-panel {
+    display: none;
+    width: 800px;
+    max-width: 100%;
+    margin: 25px auto 0;
+    padding: 18px 22px;
+    border-radius: 22px;
+    background: rgba(8,0,16,0.65);
+    border: 1px solid rgba(212,160,60,0.4);
+}
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #e8b95a;
+}
+.progress-track {
+    height: 16px;
+    border-radius: 20px;
+    background: #1a0a2e;
+    overflow: hidden;
+    border: 1px solid rgba(212,160,60,0.4);
+}
+.progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #7c3aed, #b8812b);
+    transition: width 0.5s ease;
+}
+.delete-task {
+    margin-left: 10px;
+    padding: 3px 8px;
+    border: 1px solid #b8812b;
+    border-radius: 12px;
+    background: transparent;
+    color: #e8b95a;
+    font-size: 13px;
+    cursor: pointer;
+}
+.delete-task:hover {
+    background: #b8812b;
+    color: #000;
+}
+/* GRAPH */
+.graph-section {
+    margin-top: 35px;
+    padding: 20px;
+    border-radius: 22px;
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(212,160,60,0.4);
+}
+.graph-section h3,
+.extra-panel h3 {
+    margin-bottom: 15px;
+    color: #e8b95a;
+    letter-spacing: 1px;
+}
+.graph-scroll {
+    overflow-x: auto;
+}
+.graph-scroll svg {
+    width: 100%;
+    min-width: 520px;
+    height: auto;
+}
+.graph-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 12px;
+    font-size: 14px;
+}
+.graph-legend i {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    border-radius: 3px;
+    vertical-align: middle;
+}
+.graph-empty {
+    padding: 25px;
+    color: #c9a96a;
+}
+/* STATS */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    width: 900px;
+    max-width: 95%;
+    margin: 35px auto 0;
+}
+.stat-card {
+    padding: 18px 10px;
+    border-radius: 20px;
+    background: linear-gradient(160deg, rgba(124,58,237,0.4), rgba(0,0,0,0.6));
+    border: 1px solid rgba(212,160,60,0.5);
+}
+.stat-card strong {
+    display: block;
+    font-size: 32px;
+    color: #e8b95a;
+}
+.stat-card span {
+    font-size: 14px;
+}
+.extra-panel {
+    width: 900px;
+    max-width: 95%;
+    margin: 30px auto 0;
+    padding: 22px;
+    border-radius: 25px;
+    background: rgba(8,0,16,0.65);
+    border: 1px solid rgba(212,160,60,0.4);
+}
+.history-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 170px;
+    padding-top: 10px;
+}
+.history-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    width: 12%;
+    height: 100%;
+    font-size: 12px;
+}
+.history-bar {
+    width: 100%;
+    max-width: 45px;
+    min-height: 3px;
+    border-radius: 8px 8px 0 0;
+    background: linear-gradient(180deg, #b8812b, #7c3aed);
+}
+.history-bar.empty {
+    background: #2a1a40;
+}
+.history-meta {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+    margin-top: 15px;
+    color: #e8b95a;
+    font-weight: bold;
+}
+.result-actions {
+    margin-top: 10px;
+}
+@media print {
+    .result-actions,
+    .result-refresh,
+    .datetime {
+        display: none !important;
+    }
+}
+@media (max-width: 700px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .quote-card {
+        font-size: 14px;
+    }
+}
+/* PAGE NAVIGATION LINKS */
+.page-nav {
+    position: fixed;
+    top: 20px;
+    left: 25px;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+}
+.page-nav a {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(212,160,60,0.6);
+    background: rgba(10,0,20,0.7);
+    color: #e8b95a;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.page-nav a:hover,
+.page-nav a.active {
+    background: linear-gradient(90deg, #7c3aed, #b8812b);
+    color: #fff;
+}
+.back-link {
+    display: inline-block;
+    margin: 10px 5px 0;
+    text-decoration: none;
+}
+@media (max-width: 700px) {
+    .page-nav { top: 10px; left: 10px; gap: 6px; }
+    .page-nav a { padding: 6px 10px; font-size: 11px; }
+}
+</style>
+<script>
+    /* =====================================
+   DATE AND TIME
+===================================== */
+function updateDateTime() {
+    const now = new Date();
+    const dateElement = document.getElementById("date");
+    const timeElement = document.getElementById("time");
+    if (dateElement) {
+        dateElement.innerText =
+            now.toLocaleDateString("en-IN", {
+                weekday: "short",
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            });
+    }
+    if (timeElement) {
+        timeElement.innerText =
+            now.toLocaleTimeString("en-IN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            });
+    }
+}
+updateDateTime();
+setInterval(updateDateTime, 1000);
+/* =====================================
+   DATA STORAGE
+===================================== */
+const today = new Date().toISOString().split("T")[0];
+let data = JSON.parse(
+    localStorage.getItem("makeYourselfGood")
+);
+/* =====================================
+   NEW DAY CHECK
+===================================== */
+if (!data || data.date !== today) {
+    data = {
+        date: today,
+        username: data ? data.username : "",
+        tasks: []
+    };
+    localStorage.setItem(
+        "makeYourselfGood",
+        JSON.stringify(data)
+    );
+}
+/* =====================================
+   SAVE DATA
+===================================== */
+function saveData() {
+    localStorage.setItem(
+        "makeYourselfGood",
+        JSON.stringify(data)
+    );
+}
+/* =====================================
+   LOGIN
+===================================== */
+function loginUser() {
+    const username =
+        document.getElementById("username").value.trim();
+    const password =
+        document.getElementById("password").value.trim();
+    const error =
+        document.getElementById("loginError");
+    /*
+       Fixed username and password
+    */
+    if (
+        username !== "LEELADHARAN" ||
+        password !== "462700"
+    ) {
+        error.innerText =
+            "Invalid password.";
+        return;
+    }
+    data.username = username;
+    saveData();
+    window.location.href = "page.html";
+}
+/* =====================================
+   SHOW USERNAME
+===================================== */
+function displayUserName() {
+    const userName =
+        document.getElementById("userName");
+    if (userName) {
+        userName.innerText =
+            data.username;
+    }
+}
+displayUserName();
+/* =====================================
+   SHOW ADD TASK FORM
+===================================== */
+function showTaskForm() {
+    const form =
+        document.getElementById("taskForm");
+    if (form) {
+        form.style.display = "block";
+    }
+}
+/* =====================================
+   HIDE ADD TASK FORM
+===================================== */
+function hideTaskForm() {
+    const form =
+        document.getElementById("taskForm");
+    if (form) {
+        form.style.display = "none";
+    }
+}
+/* =====================================
+   ADD TASK
+===================================== */
+function addTask() {
+    const name =
+        document.getElementById("taskName")
+        .value.trim();
+    const time =
+        document.getElementById("taskTime")
+        .value.trim();
+    const message =
+        document.getElementById("taskMessage");
+    if (name === "") {
+        message.innerText =
+            "Please enter the task name.";
+        return;
+    }
+    if (time === "") {
+        message.innerText =
+            "Please enter the task time.";
+        return;
+    }
+    const newTask = {
+        id: Date.now(),
+        name: name,
+        time: time,
+        status: null,
+        points: 0
+    };
+    data.tasks.push(newTask);
+    saveData();
+    document.getElementById("taskName").value = "";
+  document.getElementById("taskTime").value = "";
+    message.innerText = "";
+    hideTaskForm();
+    displayTasks();
+}
+/* =====================================
+   DISPLAY TASKS
+===================================== */
+function displayTasks() {
+    const taskList =
+        document.getElementById("taskList");
+    const taskContainer =
+        document.getElementById("taskContainer");
+    if (!taskList) {
+        return;
+    }
+    taskList.innerHTML = "";
+    if (data.tasks.length === 0) {
+        taskContainer.style.display = "none";
+        return;
+    }
+    taskContainer.style.display = "block";
+    data.tasks.forEach(function(task, index) {
+        const row =
+            document.createElement("tr");
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${task.time}</td>
+            <td>${task.name}</td>
+            <td>
+                <button
+                    class="status-button done
+                    ${task.status === "done" ? "selected" : ""}"
+                    onclick="setStatus(${task.id}, 'done')">
+                    ✓
+                </button>
+            </td>
+            <td>
+                <button
+                    class="status-button half
+                    ${task.status === "half" ? "selected" : ""}"
+                    onclick="setStatus(${task.id}, 'half')">
+                    −
+                </button>
+            </td>
+            <td>
+                <button
+                    class="status-button notdone
+                    ${task.status === "notdone" ? "selected" : ""}"
+                    onclick="setStatus(${task.id}, 'notdone')">
+                    ×
+                </button>
+            </td>
+        `;
+        taskList.appendChild(row);
+    });
+}
+displayTasks();
+/* =====================================
+   SET TASK STATUS
+===================================== */
+function setStatus(taskId, status) {
+    const task =
+        data.tasks.find(
+            function(item) {
+                return item.id === taskId;
+            }
+        );
+    if (!task) {
+        return;
+    }
+    task.status = status;
+    if (status === "done") {
+        task.points = 2;
+    }
+    else if (status === "half") {
+        task.points = 1;
+    }
+    else if (status === "notdone") {
+        task.points = 0;
+    }
+    saveData();
+    displayTasks();
+}
+/* =====================================
+   SUBMIT TASKS
+===================================== */
+function submitTasks() {
+    const message =
+        document.getElementById("taskMessage");
+    if (data.tasks.length === 0) {
+        message.innerText =
+            "Please add at least one task.";
+        return;
+    }
+    let incomplete = data.tasks.some(
+        function(task) {
+            return task.status === null;
+        }
+    );
+    if (incomplete) {
+        message.innerText =
+            "Please select a status for every task.";
+        return;
+    }
+    saveData();
+    window.location.href = "result.html";
+}
+/* =====================================
+   GET PERFORMANCE
+===================================== */
+  function getPerformance(points) {
+    if (points === 2) {
+        return {
+            text: "Excellent",
+            className: "excellent"
+        };
+    }
+    if (points === 1) {
+        return {
+            text: "Good",
+            className: "good"
+        };
+    }
+    return {
+        text: "Poor",
+        className: "poor"
+    };
+}
+/* =====================================
+   DISPLAY RESULT
+===================================== */
+function displayResult() {
+    const resultList =
+        document.getElementById("resultList");
+    if (!resultList) {
+        return;
+    }
+    resultList.innerHTML = "";
+    let totalPoints = 0;
+    data.tasks.forEach(function(task, index) {
+        totalPoints += task.points;
+        const performance =
+            getPerformance(task.points);
+        const row =
+            document.createElement("div");
+        row.className = "result-row";
+        row.innerHTML = `
+            <span>${index + 1}</span>
+            <span>${task.time}</span>
+            <span>${task.name}</span>
+            <span class="points">
+                ${task.points}
+            </span>
+            <span class="${performance.className}">
+                ${performance.text}
+            </span>
+        `;
+        resultList.appendChild(row);
+    });
+    const maximumPoints =
+        data.tasks.length * 2;
+    const totalElement =
+        document.getElementById("totalPoints");
+    const maxElement =
+        document.getElementById("maxPoints");
+    totalElement.innerText =
+        totalPoints;
+    maxElement.innerText =
+        maximumPoints;
+    /* Overall performance */
+    let overall = "Poor";
+    if (data.tasks.length > 0) {
+        const average =
+            totalPoints / data.tasks.length;
+        if (average >= 1.5) {
+            overall = "Excellent";
+        }
+        else if (average >= 0.5) {
+            overall = "Good";
+        }
+        else {
+            overall = "Poor";
+        }
+    }
+    const overallElement =
+        document.getElementById("overallResult");
+    overallElement.innerText =
+        overall;
+    overallElement.className =
+        overall.toLowerCase();
+    renderResultExtras(totalPoints, maximumPoints, overall);
+}
+displayResult();
+/* =====================================
+   REFRESH / CLEAR ALL TASKS
+===================================== */
+function refreshDay() {
+    /*
+       CLEAR ALL TASKS
+    */
+    data.tasks = [];
+    /*
+       Keep the username
+    */
+    data.date =
+        new Date().toISOString().split("T")[0];
+    saveData();
+    /*
+       Go to the new empty task page
+    */
+    window.location.href =
+        "page.html";
+}
+/* =====================================
+   NEW FEATURES
+===================================== */
+function getQuote(level) {
+    const quotes = {
+        general: [
+            "Small steps every day build a great future.",
+            "Discipline is the bridge between goals and success.",
+            "Do something today that your future self will thank you for.",
+            "You don't have to be perfect, just consistent.",
+            "Make today count."
+        ],
+        excellent: [
+            "Outstanding day! Keep this momentum going.",
+            "You crushed it today. Proud of you!",
+            "This is what discipline looks like."
+        ],
+        good: [
+            "Good effort! A little more push tomorrow.",
+            "Progress is progress. Keep building.",
+            "You're on the right track."
+        ],
+        poor: [
+            "Tomorrow is a fresh start. Try again!",
+            "Every champion has bad days. Come back stronger.",
+            "Don't quit. Start small and keep going."
+        ]
+    };
+    const list = quotes[level] || quotes.general;
+    const seed = parseInt(today.replace(/-/g, ""), 10);
+    return list[seed % list.length];
+}
+/* Daily quote on the tasks page */
+function showDailyQuote() {
+    const el = document.getElementById("dailyQuote");
+    if (el) {
+        el.innerText = "💡 " + getQuote("general");
+    }
+}
+showDailyQuote();
+/* Progress bar on the tasks page */
+function updateProgress() {
+    const panel = document.getElementById("progressPanel");
+    if (!panel) {
+        return;
+    }
+    if (!data.tasks || data.tasks.length === 0) {
+        panel.style.display = "none";
+        return;
+    }
+    panel.style.display = "block";
+    let marked = 0;
+    let points = 0;
+    data.tasks.forEach(function(task) {
+        if (task.status !== null) {
+            marked++;
+        }
+        points += task.points;
+    });
+    const total = data.tasks.length;
+    const percent = Math.round((marked / total) * 100);
+    document.getElementById("progressText").innerText =
+        "Marked: " + marked + "/" + total;
+    document.getElementById("progressPoints").innerText =
+        "Points so far: " + points + "/" + (total * 2);
+    document.getElementById("progressPercent").innerText = percent + "%";
+    document.getElementById("progressFill").style.width = percent + "%";
+}
+/* Delete a single task */
+function deleteTask(taskId) {
+    data.tasks = data.tasks.filter(function(task) {
+        return task.id !== taskId;
+    });
+    saveData();
+    displayTasks();
+}
+/* ---------- History ---------- */
+function loadHistory() {
+    try {
+        return JSON.parse(localStorage.getItem("makeYourselfGoodHistory")) || {};
+    } catch (e) {
+        return {};
+    }
+}
+function saveHistoryToday(stats) {
+    if (data.tasks.length === 0) {
+        return;
+    }
+    const history = loadHistory();
+    history[today] = stats;
+    localStorage.setItem(
+        "makeYourselfGoodHistory",
+        JSON.stringify(history)
+    );
+}
+function dateKeyBack(daysBack) {
+    const d = new Date(today + "T00:00:00Z");
+    d.setUTCDate(d.getUTCDate() - daysBack);
+    return d.toISOString().split("T")[0];
+}
+/* ---------- Performance graph ---------- */
+function drawPerformanceGraph() {
+    const box = document.getElementById("performanceGraph");
+    if (!box) {
+        return;
+    }
+    const n = data.tasks.length;
+    if (n === 0) {
+        box.innerHTML =
+            '<div class="graph-empty">No tasks to show yet. Add tasks and submit to see your graph.</div>';
+        return;
+    }
+    const W = Math.max(700, n * 70 + 120);
+    const H = 320;
+    const left = 80, right = 25, top = 25, bottom = 50;
+    const plotW = W - left - right;
+    const plotH = H - top - bottom;
+    const slot = plotW / n;
+    const barW = Math.min(46, slot * 0.55);
+    function yFor(points) {
+        return top + plotH - (points / 2) * plotH;
+    }
+    let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">';
+    /* grid + y labels */
+    const labels = [[0, "Poor (0)"], [1, "Good (1)"], [2, "Excellent (2)"]];
+    labels.forEach(function(item) {
+        const y = yFor(item[0]);
+        svg += '<line x1="' + left + '" y1="' + y + '" x2="' + (W - right) +
+               '" y2="' + y + '" stroke="#b8812b" stroke-opacity="0.35" stroke-dasharray="5 5"/>';
+        svg += '<text x="' + (left - 8) + '" y="' + (y + 4) +
+               '" text-anchor="end" font-size="11" fill="#e8b95a">' + item[1] + '</text>';
+    });
+    /* bars */
+    const colors = { 2: "#7c3aed", 1: "#b8812b", 0: "#4a2a2a" };
+    let running = 0;
+    let linePoints = [];
+    data.tasks.forEach(function(task, i) {
+        const cx = left + slot * i + slot / 2;
+        const y = yFor(task.points);
+        const h = Math.max(top + plotH - y, 4);
+        svg += '<rect x="' + (cx - barW / 2) + '" y="' + (top + plotH - h) +
+               '" width="' + barW + '" height="' + h + '" rx="6" fill="' +
+               colors[task.points] + '" stroke="#e8b95a" stroke-opacity="0.6"/>';
+        svg += '<text x="' + cx + '" y="' + (H - 25) +
+               '" text-anchor="middle" font-size="12" fill="#fff4dc">T' + (i + 1) + '</text>';
+        running += task.points;
+        linePoints.push([cx, yFor(running / (i + 1)), running / (i + 1)]);
+    });
+    /* running average line */
+    const path = linePoints.map(function(p, i) {
+        return (i === 0 ? "M" : "L") + p[0] + " " + p[1];
+    }).join(" ");
+    svg += '<path d="' + path + '" fill="none" stroke="#ffd27a" stroke-width="3"/>';
+    linePoints.forEach(function(p) {
+        svg += '<circle cx="' + p[0] + '" cy="' + p[1] +
+               '" r="5" fill="#0a0010" stroke="#ffd27a" stroke-width="2"/>';
+    });
+    svg += '</svg>';
+    box.innerHTML =
+        '<div class="graph-scroll">' + svg + '</div>' +
+        '<div class="graph-legend">' +
+        '<span><i style="background:#7c3aed"></i>Excellent (Done)</span>' +
+        '<span><i style="background:#b8812b"></i>Good (Half done)</span>' +
+        '<span><i style="background:#4a2a2a"></i>Poor (Not done)</span>' +
+        '<span><i style="background:#ffd27a"></i>Running average</span>' +
+        '</div>';
+}
+/* ---------- Result page extras ---------- */
+function renderResultExtras(totalPoints, maximumPoints, overall) {
+    if (!document.getElementById("statDone")) {
+        return;
+    }
+    let done = 0, half = 0, missed = 0;
+    data.tasks.forEach(function(task) {
+        if (task.status === "done") { done++; }
+        else if (task.status === "half") { half++; }
+        else { missed++; }
+    });
+    const percent = maximumPoints > 0
+        ? Math.round((totalPoints / maximumPoints) * 100)
+        : 0;
+    document.getElementById("statDone").innerText = done;
+    document.getElementById("statHalf").innerText = half;
+    document.getElementById("statMissed").innerText = missed;
+    document.getElementById("statPercent").innerText = percent + "%";
+    document.getElementById("resultQuote").innerText =
+        "💡 " + getQuote(overall.toLowerCase());
+    drawPerformanceGraph();
+    saveHistoryToday({
+        points: totalPoints,
+        max: maximumPoints,
+        percent: percent,
+        tasks: data.tasks.length,
+        done: done,
+        half: half,
+        missed: missed
+    });
+    renderHistory();
+}
+function renderHistory() {
+    const box = document.getElementById("historyBars");
+    if (!box) {
+        return;
+    }
+    const history = loadHistory();
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    let html = "";
+    for (let i = 6; i >= 0; i--) {
+        const key = dateKeyBack(i);
+        const entry = history[key];
+        const d = new Date(key + "T00:00:00Z");
+        const name = dayNames[d.getUTCDay()];
+        const pct = entry ? entry.percent : 0;
+        html +=
+            '<div class="history-col">' +
+            '<span>' + (entry ? pct + "%" : "-") + '</span>' +
+            '<div class="history-bar ' + (entry ? "" : "empty") +
+            '" style="height:' + Math.max(pct, 2) + '%"></div>' +
+            '<span>' + name + '</span>' +
+            '</div>';
+    }
+    box.innerHTML = html;
+    /* streak: consecutive "good" days (50%+), counting back from today */
+    let streak = 0;
+    let start = (history[today] && history[today].percent >= 50) ? 0 : 1;
+    for (let i = start; i < 3650; i++) {
+        const entry = history[dateKeyBack(i)];
+        if (entry && entry.percent >= 50) {
+            streak++;
+        } else {
+            break;
+        }
+    }
+    let best = null;
+    Object.keys(history).forEach(function(key) {
+        if (!best || history[key].percent > history[best].percent) {
+            best = key;
+        }
+    });
+    document.getElementById("historyStreak").innerText =
+        "🔥 Streak: " + streak + " day" + (streak === 1 ? "" : "s");
+    document.getElementById("historyBest").innerText =
+        best ? "🏆 Best day: " + best + " (" + history[best].percent + "%)" : "🏆 Best day: -";
+}
+function printReport() {
+    window.print();
+}
+</script>

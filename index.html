@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Make Yourself Good</title>
+
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="logo">✨</div>
+
+        <h1>MAKE YOURSELF GOOD</h1>
+
+        <p class="subtitle">
+            Build Better Habits. Manage Your Time.
+            Become Your Best Self.
+        </p>
+
+        <div class="login-box">
+
+            <h2>Welcome!</h2>
+
+            <p class="description">
+                Enter your name to begin your journey.
+            </p>
+
+            <form id="loginForm">
+
+                <label for="username">Your Name</label>
+
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Enter your name"
+                    maxlength="50"
+                    autocomplete="name"
+                    required
+                >
+
+                <button type="submit" id="loginButton">
+                    LOGIN ➜
+                </button>
+
+                <p id="message" aria-live="polite"></p>
+
+            </form>
+
+        </div>
+
+        <div class="quote">
+            💡 Discipline is the bridge between
+            goals and success.
+        </div>
+
+        <footer>
+            © 2026 Make Yourself Good
+        </footer>
+
+    </div>
+
+    <!-- Supabase JavaScript library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Your JavaScript -->
+    <script src="login.js"></script>
+
+</body>
+</html>
+<style>
+    * {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: Georgia, serif;
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            #7028bd,
+            transparent 45%
+        ),
+        linear-gradient(
+            135deg,
+            #170321,
+            #35104f,
+            #17091c,
+            #4b204f
+        );
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.logo {
+    font-size: 55px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    color: #ffd16b;
+    font-size: 27px;
+    text-shadow: 0 0 15px #a65bff;
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    color: #f4e8ff;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 35px;
+}
+
+.login-box {
+    padding: 30px 23px;
+
+    border: 1.5px solid #c99a4b;
+    border-radius: 28px;
+
+    background: rgba(18, 4, 30, 0.75);
+
+    box-shadow:
+        0 0 25px rgba(142, 57, 255, 0.25),
+        inset 0 0 20px rgba(160, 90, 255, 0.08);
+}
+
+h2 {
+    color: #ffd16b;
+    font-size: 28px;
+    margin-top: 5px;
+}
+
+.description {
+    color: #e6d5f2;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+label {
+    display: block;
+    text-align: left;
+    color: #ffd16b;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+
+    border-radius: 15px;
+    border: 1px solid #a65bff;
+
+    background: #220b31;
+    color: white;
+
+    font-size: 16px;
+    outline: none;
+    margin-bottom: 22px;
+}
+
+input::placeholder {
+    color: #bba9c9;
+}
+
+input:focus {
+    border-color: #ffd16b;
+    box-shadow: 0 0 10px #8037d6;
+}
+
+button {
+    width: 100%;
+    padding: 16px;
+
+    border: none;
+    border-radius: 35px;
+
+    background: linear-gradient(
+        100deg,
+        #8534ed,
+        #c45bba,
+        #c99436
+    );
+
+    color: white;
+    font-size: 19px;
+    font-weight: bold;
+    font-family: Georgia, serif;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px #a45cff;
+}
+
+button:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+#message {
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.quote {
+    margin-top: 28px;
+    padding: 18px;
+
+    border: 1px solid #bd914d;
+    border-radius: 20px;
+
+    background: rgba(114, 54, 126, 0.3);
+
+    color: #ffdb8c;
+    font-size: 15px;
+    font-style: italic;
+    line-height: 1.7;
+}
+
+footer {
+    color: #cbb6db;
+    font-size: 12px;
+    margin-top: 25px;
+}
+
+@media (max-width: 360px) {
+    h1 {
+        font-size: 23px;
+    }
+
+    .login-box {
+        padding: 25px 17px;
+    }
+}
+</style>
+<script>
+    // ========================================
+// SUPABASE CONNECTION
+// ========================================
+
+const SUPABASE_URL =
+    "https://hcyzvegqdvzrkktlbnlq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_Jw5or56NTh2MnZgcQv1Zgg_YhbQJ0h6";
+
+const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+// ========================================
+// LOGIN FORM
+// ========================================
+
+const form = document.getElementById("loginForm");
+const usernameInput = document.getElementById("username");
+const message = document.getElementById("message");
+const loginButton = document.getElementById("loginButton");
+
+
+form.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const username = usernameInput.value.trim();
+
+    if (!username || username.length > 50) {
+        message.style.color = "#ff7777";
+        message.textContent = "Enter a name between 1 and 50 characters.";
+        return;
+    }
+
+    loginButton.disabled = true;
+    message.style.color = "#ffd16b";
+    message.textContent = "Please wait...";
+
+    try {
+
+        // Save visitor name in Supabase
+        const { error } = await db
+            .from("visitors")
+            .insert([
+                {
+                    visitor_name: username
+                }
+            ]);
+
+        if (error) {
+            throw error;
+        }
+
+        // Save name in this browser
+        localStorage.setItem("username", username);
+
+        message.style.color = "#7dff75";
+        message.textContent =
+            "Welcome, " + username + "! Login successful.";
+
+        // Open the tasks page
+        setTimeout(function() {
+            window.location.href = "page.html";
+        }, 1000);
+
+    } catch (error) {
+
+        console.error("Supabase error:", error);
+
+        message.style.color = "#ff7777";
+        message.textContent =
+            "Could not save your name. Please try again.";
+
+        loginButton.disabled = false;
+    }
+
+});
+</script>
